@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venotek SafePass</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        body {
+            background-color: #0b0d17;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+        .section {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #a0a0a0;
+        }
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            color: #00d1ff;
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            background: transparent;
+            color: #00d1ff;
+            border: 2px solid #00d1ff;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #00d1ff;
+            color: #0b0d17;
+        }
+        .result, .password-output {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            word-wrap: break-word;
+            color: #00d1ff;
+        }
+        .copy-btn {
+            background: transparent;
+            border: 2px solid #00ffae;
+            color: #00ffae;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .copy-btn:hover {
+            background: #00ffae;
+            color: #0b0d17;
+        }
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 2em;
+            }
+            button, .copy-btn {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>VENOTEK SAFEPASS</h1>
+
+    <div class="section">
+        <label for="linkInput">Verificar Link / IP / Arquivo</label>
+        <input type="url" id="linkInput" placeholder="Cole o link, IP ou nome do arquivo">
+        <button onclick="verificar()">Verificar</button>
+        <div class="result" id="verificacaoResultado"></div>
+    </div>
+
+    <div class="section">
+        <label for="passwordLength">Gerador de Senhas</label>
+        <input type="text" id="passwordLength" placeholder="Tamanho da senha desejada">
+        <button onclick="gerarSenha()">Gerar Senha</button>
+        <div class="password-output" id="senhaGerada"></div>
+        <button class="copy-btn" onclick="copiarSenha()">Copiar Senha</button>
+    </div>
+</div>
+
+<script>
+    function verificar() {
+        let input = document.getElementById('linkInput').value;
+        let resultado = document.getElementById('verificacaoResultado');
+
+        if (!input) {
+            resultado.innerHTML = "⚠️ Por favor, insira algo para verificar.";
+            return;
+        }
+
+        if (input.startsWith('http') || input.startsWith('www')) {
+            resultado.innerHTML = "🔗 Link parece válido.";
+        } else if (/^\d{1,3}(\.\d{1,3}){3}$/.test(input)) {
+            resultado.innerHTML = "🌐 IP detectado: " + input;
+        } else if (input.includes(".exe") || input.includes(".zip") || input.includes(".rar")) {
+            resultado.innerHTML = "💾 Arquivo suspeito detectado.";
+        } else {
+            resultado.innerHTML = "❓ Formato não reconhecido.";
+        }
+    }
+
+    function gerarSenha() {
+        let length = parseInt(document.getElementById('passwordLength').value);
+        let result = document.getElementById('senhaGerada');
+
+        if (!length || length <= 0) {
+            result.innerHTML = "⚠️ Tamanho inválido.";
+            return;
+        }
+
+        let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}:";
+        let password = "";
+
+        for (let i = 0; i < length; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+
+        result.innerHTML = password;
+    }
+
+    function copiarSenha() {
+        let text = document.getElementById('senhaGerada').innerText;
+
+        if (!text) {
+            alert("Nenhuma senha para copiar!");
+            return;
+        }
+
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Senha copiada com sucesso!");
+        }, () => {
+            alert("Erro ao copiar senha.");
+        });
+    }
+</script>
+</body>
+</html>
